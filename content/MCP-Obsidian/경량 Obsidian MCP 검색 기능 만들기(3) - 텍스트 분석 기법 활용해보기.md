@@ -1,6 +1,6 @@
 ---
 publish: true
-modified: 2026-02-23T22:58:01.744+09:00
+modified: 2026-02-23T23:14:42.235+09:00
 cssclasses: ""
 ---
 
@@ -62,77 +62,6 @@ $$IDF(q)=ln(\frac{N−n(q)+0.5​}{n(q)+0.5}+1)$$
 
 # 2. 오픈소스 코드 분석
 - mcp-obsidian의 코드는 다음과 같이 구성되어 있다. → 우리가 수정해야 할 부분은 `SearchService`다.
-```mermaid
-classDiagram
-    class Server {
-        -vaultPath: string
-        -fileSystem: FileSystemService
-        -searchService: SearchService
-        -pathFilter: PathFilter
-        -frontmatterHandler: FrontmatterHandler
-        +setRequestHandler()
-        +connect()
-    }
-    
-    class FileSystemService {
-        -vaultPath: string
-        -pathFilter: PathFilter
-        -frontmatterHandler: FrontmatterHandler
-        +readNote(path) Promise~ParsedNote~
-        +writeNote(params) Promise~void~
-        +patchNote(params) Promise~PatchNoteResult~
-        +listDirectory(path) Promise~DirectoryListing~
-        +deleteNote(params) Promise~DeleteResult~
-        +moveNote(params) Promise~MoveResult~
-        +readMultipleNotes(params) Promise~BatchReadResult~
-        +updateFrontmatter(params) Promise~void~
-        +getNotesInfo(paths) Promise~NoteInfo[]~
-        +manageTags(params) Promise~TagManagementResult~
-        +getVaultStats(recentCount) Promise~VaultStats~
-        -resolvePath(path) string
-    }
-    
-    class SearchService {
-        -vaultPath: string
-        -pathFilter: PathFilter
-        +search(params) Promise~SearchResult[]~
-    }
-    
-    class FrontmatterHandler {
-        +parse(content) ParsedNote
-        +stringify(frontmatter, content) string
-        +validate(frontmatter) FrontmatterValidationResult
-        +extractFrontmatter(content) Record
-        +updateFrontmatter(content, updates) string
-        -checkForProblematicValues()
-    }
-    
-    class PathFilter {
-        -ignoredPatterns: string[]
-        -allowedExtensions: string[]
-        +isAllowed(path) boolean
-        +filterPaths(paths) string[]
-        -simpleGlobMatch(pattern, path) boolean
-        -isFile(path) boolean
-    }
-    
-    class URI {
-        <<utility>>
-        +generateObsidianUri(vaultPath, notePath) string
-    }
-    
-    Server --> FileSystemService : uses
-    Server --> SearchService : uses
-    Server --> PathFilter : uses
-    Server --> FrontmatterHandler : uses
-    
-    FileSystemService --> FrontmatterHandler : uses
-    FileSystemService --> PathFilter : uses
-    FileSystemService --> URI : uses
-    
-    SearchService --> PathFilter : uses
-
-```
 
 ```mermaid
 flowchart TB
@@ -606,59 +535,14 @@ const scoringTerms = terms.length > 1 ? [...terms, searchQuery] : terms;
 - 1, 2번을 종합했을 때, 배치 사이즈를 더 키움으로써 얻는 장점(속도 개선)이, 그로 인한 단점(걱정해야 할 부분이 늘어남)에 비해 너무 작다고 생각했다.
 
 
-# 4. 최종 결과 분석
-- 처음에는 다음과 같았다.
-```
-{
-	"algorithm": "substring",
-	"corpusSize": 3633,
-	"queryCount": 192,
-	"ndcg": {
-		"5": 0.2601289438576178,
-		"10": 0.23679764131363143
-	},
-	"recall": {
-		"5": 0.10354714456508278,
-		"10": 0.11966417692998142
-	},
-	"mrr": {
-		"5": 0.3766493055555556,
-		"10": 0.38035920965608466
-	},
-	"latency": {
-		"mean": 219.28459223958362,
-		"p50": 225.39587500000198,
-		"p95": 284.025999999998,
-		"p99": 449.04366599999776
-	},
-	"durationMs": 42167.715542
-}
-```
+# 4. 최종 결과
+- PR: https://github.com/bitbonsai/mcp-obsidian/pull/38
 
-- 다음과 같이 개선되었다.
-```
-{
-	"algorithm": "substring",
-	"corpusSize": 3633,
-	"queryCount": 192,
-	"ndcg": {
-		"5": 0.3530929388442528,
-		"10": 0.32136527881806237
-	},
-	"recall": {
-		"5": 0.12510698705179688,
-		"10": 0.14961678710194817
-	},
-	"mrr": {
-		"5": 0.4934027777777777,
-		"10": 0.5014942956349207
-	},
-	"latency": {
-		"mean": 215.34683502604176,
-		"p50": 204.3982500000002,
-		"p95": 269.2543750000041,
-		"p99": 463.15758399999993
-	},
-	"durationMs": 41413.277375000005
-}
-```
+| Metric | Before | After | Change |
+|--------|--------|-------|--------|
+| NDCG@5 | 0.260 | 0.353 | **+35.7%** |
+| NDCG@10 | 0.237 | 0.321 | **+35.7%** |
+| MRR@5 | 0.377 | 0.493 | **+31.0%** |
+| Recall@5 | 0.104 | 0.125 | +20.8% |
+| Recall@10 | 0.120 | 0.150 | +25.0% |
+| Latency (mean) | 219ms | 215ms | **-1.8%** |
