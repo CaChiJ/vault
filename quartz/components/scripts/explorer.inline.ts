@@ -278,11 +278,9 @@ document.addEventListener("nav", async (e: CustomEventMap["nav"]) => {
     const mobileExplorer = explorer.querySelector(".mobile-explorer")
     if (!mobileExplorer) return
 
-    if (mobileExplorer.checkVisibility()) {
+    if (mobileExplorer.checkVisibility() || currentSlug === "") {
       explorer.classList.add("collapsed")
       explorer.setAttribute("aria-expanded", "false")
-
-      // Allow <html> to be scrollable when mobile explorer is collapsed
       document.documentElement.classList.remove("mobile-no-scroll")
     }
 

@@ -1,4 +1,10 @@
 .recent-notes {
+  .left.sidebar & {
+    border-top: 1px solid var(--lightgray);
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
   & > h3 {
     margin: 0.5rem 0 0 0;
     font-size: 1rem;

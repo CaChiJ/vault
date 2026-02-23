@@ -5,11 +5,38 @@ import * as Component from "./quartz/components"
 export const sharedPageComponents: SharedLayout = {
   head: Component.Head(),
   header: [],
-  afterBody: [],
+  afterBody: [
+    Component.ConditionalRender({
+      component: Component.RecentNotes({
+        title: " ",
+        limit: 999,
+        showTags: true,
+        filter: (f) => f.slug !== "index" && f.slug !== "posts",
+      }),
+      condition: (page) => page.fileData.slug === "posts",
+    }),
+    Component.ConditionalRender({
+      component: Component.MobileOnly(
+        Component.RecentNotes({
+          limit: 5,
+          showTags: false,
+          linkToMore: "posts" as any,
+          filter: (f) => f.slug !== "index" && f.slug !== "posts",
+        }),
+      ),
+      condition: (page) => page.fileData.slug !== "posts",
+    }),
+    Component.ConditionalRender({
+      component: Component.SiblingNotes(),
+      condition: (page) =>
+        page.fileData.slug !== "index" && page.fileData.slug !== "posts",
+    }),
+  ],
   footer: Component.Footer({
     links: {
-      GitHub: "https://github.com/jackyzha0/quartz",
-      "Discord Community": "https://discord.gg/cRFFHYye7t",
+      GitHub: "https://github.com/CaChiJ",
+      LinkedIn: "https://www.linkedin.com/in/choihyunjun/",
+      Email: "mailto:chj7239@gmail.com",
     },
   }),
 }
@@ -38,7 +65,18 @@ export const defaultContentPageLayout: PageLayout = {
         { Component: Component.ReaderMode() },
       ],
     }),
-    Component.Explorer(),
+    Component.Explorer({
+      filterFn: (node) => node.slugSegment !== "tags" && node.slugSegment !== "posts",
+    }),
+    Component.DesktopOnly(
+      Component.RecentNotes({
+        title: "Recent Posts",
+        limit: 2,
+        showTags: false,
+        linkToMore: "posts" as any,
+        filter: (f) => f.slug !== "index" && f.slug !== "posts",
+      }),
+    ),
   ],
   right: [
     Component.Graph(),
