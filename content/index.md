@@ -1,7 +1,7 @@
 ---
 publish: true
-title: tail -f /dev/log
-modified: 2026-02-23T23:11:48.414+09:00
+title: ~/
+modified: 2026-02-23T23:59:20.149+09:00
 cssclasses: ""
 ---
 
