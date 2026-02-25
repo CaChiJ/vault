@@ -1,7 +1,7 @@
 ---
 publish: true
 title: Jemalloc이 JNI의 메모리 사용량을 잡는 원리
-modified: 2026-02-25T11:37:03.305+09:00
+modified: 2026-02-25T12:10:39.280+09:00
 tags:
   - "#작성필요"
 cssclasses: ""
