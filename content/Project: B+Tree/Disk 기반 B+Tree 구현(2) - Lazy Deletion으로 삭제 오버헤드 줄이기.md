@@ -1,9 +1,7 @@
 ---
 publish: true
 title: Disk 기반 B+Tree 구현(2) - Lazy Deletion
-modified: 2025-11-14T23:35:45+09:00
-tags:
-  - "#작성필요"
+modified: 2025-11-10T23:35:45+09:00
 cssclasses: ""
 ---
 
