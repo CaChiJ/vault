@@ -1,7 +1,7 @@
 ---
 publish: true
 title: RabbitMQ의 메시지 발행과 성능 트레이드오프
-modified: 2026-02-25T12:10:43.464+09:00
+modified: 2026-01-14
 cssclasses: ""
 ---
 

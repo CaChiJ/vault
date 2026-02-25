@@ -1,7 +1,7 @@
 ---
 publish: true
 title: Interrupt, Trap, Syscall
-modified: 2026-02-25T12:11:03.486+09:00
+modified: 2026-02-19
 cssclasses: ""
 ---
 

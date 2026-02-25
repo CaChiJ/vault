@@ -1,7 +1,7 @@
 ---
 publish: true
 title: Garbage Collector와 G1 GC
-modified: 2026-02-25T12:10:58.923+09:00
+modified: 2025-09-22
 tags:
   - "#작성필요"
 cssclasses: ""

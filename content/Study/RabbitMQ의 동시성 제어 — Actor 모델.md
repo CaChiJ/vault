@@ -1,7 +1,7 @@
 ---
 publish: true
 title: RabbitMQ의 동시성 제어 — Actor 모델
-modified: 2026-02-25T12:11:05.561+09:00
+modified: 2026-02-17
 cssclasses: ""
 ---
 

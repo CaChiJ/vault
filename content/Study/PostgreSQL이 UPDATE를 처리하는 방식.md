@@ -1,7 +1,7 @@
 ---
 publish: true
 title: PostgreSQL이 UPDATE를 처리하는 방식
-modified: 2026-02-25T12:11:07.685+09:00
+modified: 2026-01-31
 cssclasses: ""
 ---
 

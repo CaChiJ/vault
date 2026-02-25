@@ -1,7 +1,7 @@
 ---
 publish: true
 title: AMQP 프로토콜 구조
-modified: 2026-02-25T12:10:41.378+09:00
+modified: 2025-12-29
 tags:
   - "#작성필요"
 cssclasses: ""
