@@ -43,7 +43,7 @@ export default {
     },
     recentNotes: {
       title: "최근 게시글",
-      seeRemainingMore: ({ remaining }) => `${remaining}건 더보기 →`,
+      seeRemainingMore: ({ remaining }) => `전체 글 목록 →`,
     },
     transcludes: {
       transcludeOf: ({ targetSlug }) => `${targetSlug}의 포함`,
