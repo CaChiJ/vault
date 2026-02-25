@@ -16,6 +16,16 @@ export const sharedPageComponents: SharedLayout = {
       condition: (page) => page.fileData.slug === "posts",
     }),
     Component.ConditionalRender({
+      component: Component.RecentNotes({
+        title: "Recent Posts",
+        limit: 5,
+        showTags: false,
+        linkToMore: "posts" as any,
+        filter: (f) => f.slug !== "index" && f.slug !== "posts",
+      }),
+      condition: (page) => page.fileData.slug === "index",
+    }),
+    Component.ConditionalRender({
       component: Component.MobileOnly(
         Component.RecentNotes({
           limit: 5,
@@ -24,7 +34,7 @@ export const sharedPageComponents: SharedLayout = {
           filter: (f) => f.slug !== "index" && f.slug !== "posts",
         }),
       ),
-      condition: (page) => page.fileData.slug !== "posts",
+      condition: (page) => page.fileData.slug !== "posts" && page.fileData.slug !== "index",
     }),
     Component.ConditionalRender({
       component: Component.SiblingNotes(),
@@ -71,15 +81,18 @@ export const defaultContentPageLayout: PageLayout = {
     Component.Explorer({
       filterFn: (node) => node.slugSegment !== "tags" && node.slugSegment !== "posts",
     }),
-    Component.DesktopOnly(
-      Component.RecentNotes({
-        title: "Recent Posts",
-        limit: 2,
-        showTags: false,
-        linkToMore: "posts" as any,
-        filter: (f) => f.slug !== "index" && f.slug !== "posts",
-      }),
-    ),
+    Component.ConditionalRender({
+      component: Component.DesktopOnly(
+        Component.RecentNotes({
+          title: "Recent Posts",
+          limit: 2,
+          showTags: false,
+          linkToMore: "posts" as any,
+          filter: (f) => f.slug !== "index" && f.slug !== "posts",
+        }),
+      ),
+      condition: (page) => page.fileData.slug !== "index",
+    }),
   ],
   right: [
     Component.Graph(),
@@ -103,7 +116,18 @@ export const defaultListPageLayout: PageLayout = {
         { Component: Component.Darkmode() },
       ],
     }),
-    Component.Explorer(),
+    Component.Explorer({
+      filterFn: (node) => node.slugSegment !== "tags" && node.slugSegment !== "posts",
+    }),
+    Component.DesktopOnly(
+      Component.RecentNotes({
+        title: "Recent Posts",
+        limit: 2,
+        showTags: false,
+        linkToMore: "posts" as any,
+        filter: (f) => f.slug !== "index" && f.slug !== "posts",
+      }),
+    ),
   ],
   right: [],
 }
