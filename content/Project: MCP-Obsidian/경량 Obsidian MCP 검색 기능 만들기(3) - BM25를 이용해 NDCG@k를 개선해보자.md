@@ -1,7 +1,7 @@
 ---
 publish: true
 title: 경량 Obsidian MCP 검색 기능 만들기(3) - BM25를 이용해 NDCG@k를 개선해보자
-modified: 2026-02-26T14:42:40.308+09:00
+modified: 2026-02-26T14:55:54.054+09:00
 cssclasses: ""
 ---
 
@@ -244,27 +244,15 @@ const scoringTerms = terms.length > 1 ? [...terms, searchQuery] : terms;
 - 검색 로직을 강화하는 과정에서 쿼리 검색 소요 시간이 2배로 증가하였다. (234ms → 592ms)
 - 기존에는 `limit` 인자로 들어온 개수만큼 문서가 수집되면 즉시 검색을 중단하고 반환했는데, BM25를 적용하며 항상 모든 문서를 읽다 보니 생긴 문제로 보인다.
 
-- 파트: fileRead (파일 I/O + frontmatter + toLowerCase)   
-	- 시간: ~440ms                                            
-	- 비율: ~80%                                                         
-- 파트: docLength (split + filter로 단어 수 계산)
-	- 시간: ~55ms                                             
-	- 비율: ~10%                      
-- 파트: match (term indexOf + filename 매칭)              
-	- 시간: ~11ms                                             
-	- 비율: ~2%                                                           
-- 파트: DF (scoringTerms includes 체크)                   
-	- 시간: ~10ms
-	- 비율: ~2%
-- 파트: findFiles (디렉토리 재귀 탐색)
-	- 시간: ~6ms
-	- 비율: ~1%
-- 파트: candidate (excerpt, TF 카운트, push)
-	- 시간: ~5ms
-	- 비율: ~1%
-- 파트: rerank (BM25 스코어링 + 정렬)
-	- 시간: ~0.5ms
-	- 비율: ~0%
+| 파트 | 설명 | 시간 | 비율 |
+|---|---|---:|---:|
+| fileRead | 파일 I/O + frontmatter + toLowerCase | ~440ms | ~80% |
+| docLength | split + filter로 단어 수 계산 | ~55ms | ~10% |
+| match | term indexOf + filename 매칭 | ~11ms | ~2% |
+| DF | scoringTerms includes 체크 | ~10ms | ~2% |
+| findFiles | 디렉토리 재귀 탐색 | ~6ms | ~1% |
+| candidate | excerpt, TF 카운트, push | ~5ms | ~1% |
+| rerank | BM25 스코어링 + 정렬 | ~0.5ms | ~0% |
 
 - MCP 서버 실행 시 메모리에 올려두고 fs.watch로 캐시 무효화하며 관리하는 방법도 있지만, 상태 관리의 복잡성을 제어하기 힘들어 보였다.
 - 때문에 단순하게 병렬 I/O를 통해, line을 5개씩 퍼올리는 방법으로 선택했다.
