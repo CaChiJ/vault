@@ -2,8 +2,6 @@
 publish: true
 title: Disk 기반 B+Tree 구현(3) - Bottom-Up Reorganization
 modified: 2025-11-14T23:35:45+09:00
-tags:
-  - "#작성필요"
 cssclasses: ""
 ---
 
@@ -12,7 +10,9 @@ cssclasses: ""
 프로그램을 `quit`하며 DB를 닫을 때, 이렇게 쌓인 Dead 플래그 엔트리들을 어떻게 털어내고 DB 파일을 압축(Reorganize)할 것인가에 대한 구현과 성능 최적화 과정을 다룬다. (PostgreSQL의 autovacuum full과 유사한 작업을 수행하여 개선한다)
 
 # 1. 접근 방식: Bottom-Up Reorganization
-#작성필요 - Top-Down 방식(단순 반복 Insert)과 Bottom-Up 방식의 I/O 비용 차이 - Random I/O, Sequential I/O
+- Top-Down 방식(정렬된 데이터를 다시 한 건씩 Insert)으로 재구성하면, 트리를 반복 탐색하며 페이지를 여기저기 건드리게 되어 랜덤 I/O가 크게 늘어난다.
+- 반대로 Bottom-Up 방식은 리프부터 순서대로 새 파일에 채워 넣기 때문에 쓰기 패턴이 거의 순차 I/O로 바뀐다.
+- 디스크 기반 환경에서는 이 차이가 크게 작용했고, 실제 실험에서도 재구성 시간 단축 효과를 확인할 수 있었다.
 
 - Bottom-up 방식으로, 새로운 파일을 생성한 뒤 모든 리프 노드들을 deletion_bitmap을 체킹하며 순차적으로 삽입한다.
 - 이때, 두 개의 버퍼를 유지한다. (마지막 리프 노드 처리 과정의 성능 최적화 목적)

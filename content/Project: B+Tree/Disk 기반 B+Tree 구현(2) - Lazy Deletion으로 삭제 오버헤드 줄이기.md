@@ -5,11 +5,11 @@ modified: 2025-11-10T23:35:45+09:00
 cssclasses: ""
 ---
 
-
 # 1. 잦은 Deletion의 오버헤드
 - "Delete할 때마다 Coalesce/Redistribute를 하는 게 정말 효율적인가?"
 - 이전 글에서 구현한 기존 방식(Bptree 1)의 Delete는 매번 Sibling을 조회하고 Coalesce 또는 Redistribute를 수행하며, 이를 재귀적으로 부모까지 전파한다.
-#작성필요 - Bptree 1 Delete 과정에서 발생하는 Page I/O 비용 (디스크 접근 횟수 측면)
+- 이 과정은 삭제 1건마다 여러 페이지를 읽고 쓰게 만든다. (현재 리프, 형제 리프, 부모, 경우에 따라 상위 부모까지)
+- 특히 디스크 기반 구조에서는 이런 상향 전파가 랜덤 I/O를 반복적으로 유발해, 키 삭제가 몰리는 구간에서 체감 성능이 크게 떨어졌다.
 - 이 과정에서 발생하는 비용이 비효율적이라고 판단하여, Delete할 때마다 Coalesce/Redistribute를 수행하는 대신 Deletion Bitmap을 이용한 Lazy Deletion으로 개선하였다.
 
 # 2. Deletion Bitmap을 이용한 Lazy Deletion

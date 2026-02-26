@@ -2,8 +2,6 @@
 publish: true
 title: Garbage Collector와 G1 GC
 modified: 2025-09-22
-tags:
-  - "#작성필요"
 cssclasses: ""
 ---
 
@@ -40,9 +38,15 @@ cssclasses: ""
 
 # 3. G1 GC
 - G1 GC는 JAVA 7부터 추가되었으며 JAVA 9에서 기본 GC로 채택되었고, JAVA 14에서 기존 기본 GC 였던 CMS GC는 완전 제거되었다.
-#작성필요 - G1 GC의 Region 기반 힙 분할 방식, 기존 세대별 GC(CMS 등)와의 구조적 차이 - Region, Eden Region, Survivor Region, Old Region, Humongous Object
-#작성필요 - Mixed GC의 동작 방식(Young + 일부 Old Region을 함께 수거) - Mixed GC, Young GC, Concurrent Marking
-#작성필요 - Pause Time Target 기반의 예측적 수거 방식 - MaxGCPauseMillis, Predicted Pause Time
+- G1은 힙을 고정된 크기의 Region으로 나누고, 각 Region을 상황에 따라 Eden/Survivor/Old로 역할 부여한다.
+- 즉, 과거 CMS처럼 영역 전체를 크게 쓸기보다 "회수 이득이 큰 Region부터" 선택적으로 수거하는 구조다.
+- 큰 객체(Humongous Object)는 일반 Region 여러 개를 연속 점유하는 형태로 관리되어, 별도 취급된다.
+- G1의 기본 흐름은 Young GC + Concurrent Marking + Mixed GC로 이어진다.
+	- Young GC: Eden/Survivor 중심 회수
+	- Concurrent Marking: Old 영역 생존 객체를 애플리케이션과 병행 마킹
+	- Mixed GC: Young 영역과 함께 회수 가치가 높은 일부 Old Region을 같이 수거
+- 또한 G1은 목표 pause time(`-XX:MaxGCPauseMillis`)을 기준으로, 이번 사이클에서 어떤 Region을 얼마나 회수할지 예측해 수거량을 조정한다.
+- 이 예측이 항상 완벽하진 않지만, "긴 정지 한 번"보다 "짧은 정지 여러 번"으로 지연을 제어하기 쉽다는 장점이 있다.
 
 # 4. GC가 있어도 메모리 릭이 발생하는 경우
 - JVM이 알아서 GC 통해 Heap을 관리하므로 Memory Leak이 안 일어난다고 생각하면 오산이다.

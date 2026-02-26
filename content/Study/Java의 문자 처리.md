@@ -11,11 +11,11 @@ cssclasses: ""
 - Java 1.0 시절(1996년)에는 유니코드가 2바이트의 고정 길이로 표현되었다. (UCS-2)
 - 이후 UTF-8/16/32가 등장함에 따라 Java도 이를 지원할 방법을 고민했다.
 - char는 2바이트 고정 길이로 그대로 두되, UTF-16에서 2바이트만으로 표현되는 문자들은 char 하나로 표현 가능하게 했다.
-- UTF-16에서 4바이트가 필요한 문자들은 String으로 표현하게 했다.
-- 때문에 지금도 java에서 이모지와 일부 문자는 char만으로 표현할 수 없고, String으로 표현해야 한다.
+- UTF-16에서 4바이트가 필요한 문자는 char 2개(Surrogate 페어)로 표현한다.
+- 때문에 지금도 Java에서 이모지와 일부 문자는 char 하나만으로 표현할 수 없고, 보통 String(또는 code point)으로 다룬다.
 	- e.g., `char c = '𝕏';` → 컴파일 에러
-	- e.g., `String s = '𝕏';` → `s.length()`는 2 출력
-- 때문에 단 한 문자를 저장할 때도 2바이트를 넘어간다면 String을 써야 한다.
+	- e.g., `String s = "𝕏";` → `s.length()`는 2, `s.codePointCount(0, s.length())`는 1
+- 단일 문자를 "유니코드 코드 포인트 기준"으로 다뤄야 한다면 `char` 대신 `int`를 사용하는 것이 안전하다.
 
 # 2. String in Java
 - Java의 String은 Immutable한 객체이다. (C++의 string은 Mutable이다.)
@@ -25,7 +25,7 @@ cssclasses: ""
 - Java의 char 타입은 UTF-16 인코딩을 사용하는, 2byte짜리 타입이다.
 - UTF-16은 가변길이 문자열이므로 2바이트를 넘어가는 문자를 표현할 때는 char 두 개를 합쳐서 하나의 문자를 표현한다. 이를 Surrogate Pair라고 부른다.
 - 이때, `String.length()` 는 여전히 문자 개수가 아니라 char 배열의 길이를 반환하므로 주의해야 한다. → `String.codePointCount()` 를 사용해야 한다.
-- 또한, char 하나만으로는 모든 유니코드 문자를 표시할 수 없다. → 문자 하나를 받을 때도 char[]를 사용해야 한다.
+- 또한, char 하나만으로는 모든 유니코드 문자를 표시할 수 없다. → 문자 단위 처리에서는 code point(`int`) 기준 API 사용을 고려해야 한다.
 #### ◼️ String Pool
 - 문자열은 매우 빈번하게 사용된다.
 - 때문에 똑같은 문자열이 힙 공간을 엄청나게 차지할 가능성이 있다.
@@ -44,8 +44,9 @@ cssclasses: ""
 #### ◼️ StringBuilder
 - String은 Immutable하다. → `+` 연산자로 계속 이어붙이면 힙 공간을 계속 새로 할당한다. → 낭비
 - 이를 해결하기 위해 StringBuilder를 사용한다.
-- 힙 공간을 계속 새로 할당하는 게 아니라, 객체 내부적으로 `byte[]` 배열을 선언해두고, 새 문자열을 append할 때 배열 뒤쪽에 이어 붙이는 식으로 수정하는 방식
-- 만약 `byte[]` 배열이 가득 차면 배열 크기를 2배로 만들어 준다. → 동적 배열과 같은 원리 → Append가 아주 많이 일어난다면 미리 capacity를 크게 잡아주는 식으로 최적화
+- 힙 공간을 계속 새로 할당하는 게 아니라, 내부 버퍼에 append하며 필요할 때만 버퍼를 확장한다.
+- JDK 8까지는 주로 `char[]`, JDK 9+에서는 Compact Strings 영향으로 `byte[] + coder` 표현을 쓴다.
+- Append가 아주 많이 일어난다면 미리 capacity를 크게 잡아주는 식으로 최적화할 수 있다.
 
 # 3.  String Pool
 #### ◼️ Literal 문자열
@@ -65,7 +66,5 @@ cssclasses: ""
 - `intern`은 내부적으로 StringTable이라는 Hash Table을 이용해 동작한다.
 	- 문자열의 해시값을 계산해 StringTable에서 계산함.
 	- `-XX:StringTableSize` 으로 해시 테이블 버킷 개수 조절 가능 (기본값은 6만 개 정도)
-- `O(1)`이긴 하지만 성능 문제 존재 → 왠만하면 쓰지 말자
-	- Why?
-		- `StringTable`은 JVM 전체에서 공유됨. → 멀티 스레드 환경에서 Lock 경합 발생
-		- 만약 정말 메모리가 부족한 대용량 트래픽 감당해야 하는 상황에서는 `ConcurrentHashMap` 이용해서 더 빠른 Locking 알고리즘을 이용해 동시성 처리를 수행한다.
+- `intern`은 "항상 써야 한다/항상 피해야 한다"가 아니라, 문자열 중복도가 매우 높고 cardinality가 제한적인 경우에 유효하다.
+	- 반대로 값 종류가 지나치게 많으면 StringTable 부담이 커질 수 있으니, 실제 트래픽 기준으로 측정 후 적용하는 게 안전하다.

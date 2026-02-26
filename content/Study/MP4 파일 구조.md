@@ -2,19 +2,15 @@
 publish: true
 title: MP4 파일 구조
 modified: 2026-02-09
-tags:
-  - "#작성필요"
 cssclasses: ""
 ---
 
-# 1. 백엔드 개발자가 MP4 구조를 알아야 하는 이유
-#작성필요 - 백엔드 개발자가 MP4 구조를 알아야 하는 이유 - Seeking, 스트리밍 최적화, 메타데이터 파싱
 
-# 2. Box
+# 1. Box
 ![[Pasted image 20260209225624.png]]
 ![[Pasted image 20260209230043.png]]
 - MP4 파일의 모든 data는 'Box'(구 'Atom') 구조로 저장되어 있다.
-- 각각의 box는 size, type(4 printable chars), version, data를 가진다.
+- 기본 Box는 size, type, data를 가지며, 일부 FullBox 계열은 version/flags 필드가 추가된다.
 
 | 필드        | 크기      | 역할                                                                                                            |
 | --------- | ------- | ------------------------------------------------------------------------------------------------------------- |
@@ -23,7 +19,7 @@ cssclasses: ""
 | LargeSize | 8 bytes | Size 필드 값이 1인 경우에만 존재한다. Size의 표현 범위(32비트)를 초과하는 박스의 크기를 명시한다.                                                |
 | Data      | 가변      | 박스의 실제 Payload이다. 박스 안에는 필드 데이터 뿐만 아니라, 하위 박스들이 계층적으로 존재할 수 있다.                                               |
 
-# 3. MP4 File - Hierarchical View
+# 2. MP4 File - Hierarchical View
 - MP4 파일은 아래 그림과 같이 Box들의 계층적인 배치로 이루어진다.
 ![[Pasted image 20260209230434.png]]
 - 가장 상위 레벨의 Box로는 ftyp, moov, mdat이 있다.
@@ -42,7 +38,7 @@ cssclasses: ""
 - 이 박스는 내부에 세부적인 하위 박스 구조를 갖지 않는다. 단순히 연속된 바이너리의 집합체이다.
 - 따라서 moov 박스 내부의 샘플 테이블(stbl)에 있는 오프셋 정보를 통해 이 박스 내에 원하는 정보의 위치를 특정할 수 있다.
 
-# 4. 원하는 샘플의 위치(mdat) 찾기
+# 3. 원하는 샘플의 위치(mdat) 찾기
 ###### `moov.trak.mdia.minf.stbl` 메타데이터
 - `moov.trak.mdia.minf.stbl` 에 위치한 메타데이터를 이용해 논리적 시간 단위인 Sample을 물리적 바이트 위치인 오프셋으로 변환할 수 있다.
 	- `stts(Time-to-Sample)`: 각 샘플의 재생 시간을 정의한다.  → 가변 프레임 레이트(VFR) 지원의 핵심
