@@ -48,7 +48,7 @@ cssclasses: ""
 - JDK 8까지는 주로 `char[]`, JDK 9+에서는 Compact Strings 영향으로 `byte[] + coder` 표현을 쓴다.
 - Append가 아주 많이 일어난다면 미리 capacity를 크게 잡아주는 식으로 최적화할 수 있다.
 
-# 3.  String Pool
+# 3. String Pool
 #### ◼️ Literal 문자열
 - `String str = "Hello";`
 - 컴파일 타임에 문자열을 스캔하여, Constant Pool에 저장하도록 한다.
