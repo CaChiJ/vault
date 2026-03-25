@@ -38,6 +38,7 @@ cssclasses: ""
 #### ◼️ Copy back
 - 하나의 칩 안에 있는 Block들은 Page Register를 공유한다.
 - 때문에 Copy 대상(source)과 목적지(destination)이 하나의 Chip 내에 위치한다면, Page Register를 이용해 System BUS나 DRAM buffer를 거치지 않고 복사할 수 있다.
+
 ![[Pasted image 20260325212010.png|429]]
 
 #### ◼️ Cache read/program
