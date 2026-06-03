@@ -9,6 +9,7 @@ cssclasses: ""
 - [[Project: MCP-Obsidian/경량 Obsidian MCP 검색 기능 만들기(3) - BM25를 이용해 NDCG@k를 개선해보자\|지난 글]]에서는 BM25를 이용해 ndcg@5를 0.353까지 개선했다.
 - 하지만 BM25는 여전히 텍스트 매칭 방식이므로 오타나 띄어쓰기 등에 취약하다.
 - 때문에 검색 정확도를 더 개선하기 위해서는 의미론적(Semantic) 맥락을 고려할 수 있어야 하고, 이때 텍스트 임베딩이 필요하다.
+	- 오픈소스 커뮤니티 내에서도 Semantic Search에 대한 논의가 제안되어 왔다. (https://github.com/bitbonsai/mcpvault/issues/28)
 
 # 1. 임베딩 모델 선정
 - [jina-embedding-v5-text-nano-retrieval-GGUF](jinaai/jina-embeddings-v5-text-nano-retrieval-GGUF) 모델을 사용했는데, 그 이유는 다음과 같다.
