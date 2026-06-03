@@ -70,14 +70,14 @@ const pollMemoryUsage = setInterval(async () => {
 # 4. Context Size 조정하기
 #### ◼️ Problem: KV 행렬
 - jina-embeddings-v5-text-nano 모델은 트랜스포머 기반의 Encoder 모델이다.
-- 때문에 추론 과정에서 메모리 상에 KV 캐시를 올려두고 사용한다.
+- 때문에 추론 과정에서 메모리 상에 KV 행렬 공간을 잡아두고 사용한다.
 - 기본 Context Size는 8192로 설정되어 있기 때문에, 임베딩을 수행할 때마다 다음과 같이 KV 행렬이 288MB를 점유함을 예상할 수 있다.
 	- jina-embeddings-v5-text-nano 모델 구성
 		- Hidden Size: 768
 		- Hidden Layer: 12
 		- Head Dimension: 64 (→ Head Count = 768 / 64 = 12)
 	- KV 행렬 크기
-		- $(히든레이어 개수)12개 * (토큰별 캐시 벡터 길이)768 * (Float16)2 * (Context 크기)8192 * (Key, Value 각각)2 = 288MB$
+		- $(히든레이어 개수)12개 * (토큰별 KV 벡터 길이)768 * (Float16)2 * (Context 크기)8192 * (Key, Value 각각)2 = 288MB$
 
 #### ◼️ Idea: Context Size 제한하기
 - 그렇다면 최대 Context Size를 제한하면 어떨까?
