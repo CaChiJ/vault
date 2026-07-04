@@ -31,14 +31,14 @@ cssclasses: ""
 ## 2.1. 조사
 #### ◼️ Keywords to research
 - LLM과의 대화를 통해 내가 모르는 키워드들을 뽑아 보았다.
-- [[3.Study/🔤 AI/Qwen3 Embedding\|Qwen3 embedding 0.6B]]
+- [[3.Study/🔤 AI · RAG/Qwen3 Embedding\|Qwen3 embedding 0.6B]]
 	- Octen/Octen-Embedding-0.6B
 		- 다국어를 지원할 뿐만 아니라, 파라미터 크기 대비 Retrieval 벤치마크 점수가 높아 선택했다.
 		- Qwen3 0.6B를 파인튜닝한 모델이다.
 	- https://arxiv.org/abs/2506.05176
 - Quantization
 	- Optimum
-	- [[3.Study/🔤 AI/ONNX]]
+	- [[3.Study/🔤 AI · RAG/ONNX]]
 	- 혼합 정밀도 양자화 (Mixed-Precision Quantization)
 		- MLP(Feed-Forward)
 		- EXL2 & AQLM
@@ -50,11 +50,11 @@ cssclasses: ""
 	- Wanda (Weight and Activation)
 - Distillation
 	- QAT with Knowledge Distillation
-- [[3.Study/🔤 AI/MTEB]]
+- [[3.Study/🔤 AI · RAG/MTEB]]
 
 
 ## 2.2. 테스트/벤치 환경 만들기
-- 현재 방식의 정확도를 측정하여 개선폭 기준값으로 잡기 위해 [[3.Study/🔤 AI/MTEB]]를 이용해 Qwen3 0.6B 모델의 벤치를 돌려보았다.
+- 현재 방식의 정확도를 측정하여 개선폭 기준값으로 잡기 위해 [[3.Study/🔤 AI · RAG/MTEB]]를 이용해 Qwen3 0.6B 모델의 벤치를 돌려보았다.
 - 처음에는 18개 국어 데이터셋으로 Retrieval을 돌렸는데, 로컬 환경에서 부하가 너무 커 중단했다.
 - 어차피 실험용 점수이니 영어/한국어 2개 데이터셋으로만 벤치를 돌리고 임베딩 토큰 길이도 최대 1024개로 제한해서 수행해보았다.
 #### ◼️ 벤치마크: 기존 모델들의 정확도 측정
